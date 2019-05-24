@@ -17,13 +17,25 @@ var server = http.createServer(function (req, res) {
             body += chunk;
         });
 
-        //O body deve ser um objeto json que ser� adicionado ao array contido no arquivo tarefas.json
-        //Se tudo der certo, s� retornar 200 - OK
-
-        //req.on("end", function(){
-        //    res.writeHead(200, { "Content-Type": "text/html" });
-        //    res.end(body);
-        //});
+        //O body deve ser um array de objetos json que será gravado no arquivo tarefas.json, sobrescrevendo o que tiver lá
+        //Se tudo der certo, só retornar 200 - OK
+        req.on("end", function(){
+            console.log(body);
+            fs.writeFile("./tarefas.json", body, function(err) {
+                if (err) {
+                    throw err;
+                };
+                console.log('Salvou');
+            });
+    
+            var header = { "Content-Type": "text/html"
+                         , "Access-Control-Allow-Origin": "http://localhost" 
+                         , "Access-Control-Allow-Headers": "Content-Type" 
+                         , "Access-Control-Allow-Methods": "GET POST PUT DELETE OPTIONS" 
+        }
+            res.writeHead(200, header);
+            res.end();
+        });
     }
 
     if (req.method === "DELETE") {
@@ -34,6 +46,15 @@ var server = http.createServer(function (req, res) {
     if (req.method === "PUT") {
     
         //pegar o id da tarefa na requisi��o, buscar o objeto json correspondente no arquivo de tarefas e editar o objeto json no arquivo
+    }
+
+    if (req.method === "OPTIONS") {
+        var header = { "Access-Control-Allow-Origin": "http://localhost" 
+                        , "Access-Control-Allow-Headers": "Content-Type" 
+                        , "Allow": "GET POST PUT DELETE" 
+                        };
+        res.writeHead(204, header);
+        res.end();
     }
 
     
