@@ -13,14 +13,15 @@ var server = http.createServer(function (req, res) {
     if (req.method === "POST") {
     
         var body = "";
+        var indice = 1;
         req.on("data", function (chunk) {
+            console.log('i: ' + indice++);
             body += chunk;
         });
 
         //O body deve ser um array de objetos json que será gravado no arquivo tarefas.json, sobrescrevendo o que tiver lá
         //Se tudo der certo, só retornar 200 - OK
         req.on("end", function(){
-            console.log(body);
             fs.writeFile("./tarefas.json", body, function(err) {
                 if (err) {
                     throw err;
